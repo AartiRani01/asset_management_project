@@ -153,11 +153,7 @@ class Process(models.Model):
 
     process_name = models.CharField(max_length=255, null = True)
 
-    # class Meta:
-    #     permissions = [
-    #         ("can_view_process", "Can view process"),
-    #     ]
-
+    
     created_by = models.ForeignKey(
         SignupUser,
         on_delete=models.SET_NULL,
@@ -224,12 +220,7 @@ class Asset(models.Model):
         ('pieces', 'Pieces'),
     ]
 
-
-    # class Meta:
-    #     permissions = [
-    #         ("can_manage_asset", "Can manage asset"),
-    #     ]
-
+    
     asset_id = models.CharField(max_length=20, unique=True, editable=False, null = True, blank =True)
     # production_id = models.CharField(max_length=20, unique=True, editable=False, null = True, blank =True)
     name = models.CharField(max_length=255, null = True)
@@ -284,7 +275,7 @@ class Asset(models.Model):
         if not self.asset_id:
             self.asset_id = generate_unique_id(Asset, 'asset_id', 'ASN')
 
-
+        
         # if not self.production_id:
         #     self.production_id = generate_unique_id(Asset, 'production_id', 'Prod')
 

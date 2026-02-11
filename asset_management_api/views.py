@@ -369,7 +369,7 @@ class ClientViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save(
-            created_by=self.request.user.username,
+            created_by=self.request.user,
             created_date=timezone.now()
         )
 
