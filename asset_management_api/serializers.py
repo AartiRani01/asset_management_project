@@ -9,6 +9,24 @@ from django.contrib.auth.models import Group
 from .models import Asset
 
 
+class ClientNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = "__all__"
+
+
+class ProcessNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Process
+        fields = "__all__"
+
+
+class UserNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SignupUser
+        fields = ['id', 'username', 'email', 'phone']
+
+
 # 1️ Main Asset Serializer (for responses)
 class AssetSerializer(serializers.ModelSerializer):
     class Meta:
@@ -97,11 +115,7 @@ class ClientSerializer(serializers.ModelSerializer):
         model = Client
         fields = "__all__"
         read_only_fields = ['ip_address', 'geo_location']
-        # fields = [
-        #     'id', 'name', 'address', 'gst_no', 'mobile_no',
-        #     'contact_person', 'location', 'client_code',
-        #     'created_by', 'created_date'
-        # ]
+
     
     def validate_mobile_no(self, value):
         value = str(value)
@@ -122,7 +136,10 @@ class ClientSerializer(serializers.ModelSerializer):
 
 # -------------------- Process Serializer --------------------
 class ProcessSerializer(serializers.ModelSerializer):
-    created_by = serializers.ReadOnlyField(source='created_by.id')
+    created_by = UserNestedSerializer(
+        read_only=True
+    )
+    # created_by = serializers.ReadOnlyField(source='created_by.id')
 
     class Meta:
         model = Process
@@ -139,20 +156,17 @@ class ProcessSerializer(serializers.ModelSerializer):
 
 # -------------------- Asset Serializer --------------------
 class AssetSerializer(serializers.ModelSerializer):
-    created_by = serializers.ReadOnlyField(source='created_by.username')
+    # created_by = serializers.ReadOnlyField(source='created_by.username')
+
+    client_details = ClientNestedSerializer(source='client', read_only=True)
+    process_details = ProcessNestedSerializer(source='process', read_only=True)
+    created_by = UserNestedSerializer(read_only=True)
 
     class Meta:
         model = Asset
         fields = "__all__"
-    # def validate_production_capacity(self, value):
-    #     if value <= 0:
-    #         raise serializers.ValidationError("Production capacity must be greater than 0")
-    #     return value
 
-    # def validate_installation_date(self, value):
-    #     if value > models().date():
-    #         raise serializers.ValidationError("Installation date cannot be in the future")
-    #     return value
+
 
     def validate(self, data):
         if data.get('output_unit') and data.get('raw_material_unit'):
@@ -173,19 +187,15 @@ class AssetSerializer(serializers.ModelSerializer):
 
 
         return data
-        # fields = [
-        #     'id', 'name', 'production_capacity',
-        #     'iot_device_id', 'plc_device_id', 'energy_meter_id',
-        #     'output_unit', 'raw_material_unit',
-        #     'installation_date',
-        #     'client', 'process',
-        #     'created_by', 'created_date'
-        # ]
+
 
 
 # -------------------- ProductionLine Serializer --------------------
 class ProductionLineSerializer(serializers.ModelSerializer):
-    created_by = serializers.ReadOnlyField(source='created_by.id')       #A read-only field that simply returns the field value.
+    assets = AssetSerializer(many=True, read_only=True)
+    client = ClientNestedSerializer(read_only=True)
+    created_by = UserNestedSerializer(read_only=True)
+    # created_by = serializers.ReadOnlyField(source='created_by.id')       #A read-only field that simply returns the field value.
 
     assets = serializers.PrimaryKeyRelatedField(
         many=True,
