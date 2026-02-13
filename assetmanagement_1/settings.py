@@ -86,7 +86,9 @@ DATABASES = {
     }
 }
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://asset-management-project-1lzy.onrender.com"
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -228,7 +230,9 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
 }
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://asset-management-project-1lzy.onrender.com",
+]
 
 
 
