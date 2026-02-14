@@ -63,7 +63,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SignupUser
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name', 'phone','role']
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name', 'phone', 'marital_status','role']
 
     def create(self, validated_data):
         role = validated_data.pop('role')
@@ -75,6 +75,7 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             email=validated_data.get('email'),
             phone=validated_data.get('phone'),
+            marital_status=validated_data.get('marital_status')
 
         )
 

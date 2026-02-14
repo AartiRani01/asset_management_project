@@ -138,6 +138,19 @@ mobile_validator = RegexValidator(
 
 class SignupUser(AbstractUser):
     phone = models.CharField(max_length=15, unique=True)
+    MARITAL_STATUS_CHOICES = [
+        ('single', 'Single'),
+        ('married', 'Married'),
+        ('divorced', 'Divorced'),
+        ('widowed', 'Widowed'),
+    ]
+
+    marital_status = models.CharField(
+        max_length=10,
+        choices=MARITAL_STATUS_CHOICES,
+        blank=True,
+        null=True
+    )
     # role = models.CharField(max_length=50)
     # groups = models.ManyToManyField('auth.Group', related_name='signupuser_groups', blank=True) 
     # user_permissions = models.ManyToManyField('auth.Permission', related_name='signupuser_permissions', blank=True)
