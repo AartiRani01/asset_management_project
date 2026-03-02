@@ -1,5 +1,8 @@
+
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page 
 from rest_framework.decorators import action
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -18,13 +21,33 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
-
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from .models import Asset
 from .serializers import (
     AssetSerializer,
     AssetCreateSerializer,
     AssetStatusSerializer
 )
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter   
+# from digifact import ProductionMetrics
+
+
+# class TestDigifactAPI(APIView):
+
+#     def get(self, request):
+#         factory = ProductionMetrics(
+#             total_time=460,
+#             ideal_production=1000,
+#             actual_count=870,
+#             total_count=1000,
+#             fault_count=10,
+#             total_downtime=80,
+#             total_uptime=400
+#         )
+
+#         return Response(factory.calculate_oee())
 
 
 class AssetViewSet(viewsets.ModelViewSet):
@@ -108,12 +131,54 @@ class AssetViewSet(viewsets.ModelViewSet):
             "id": asset.id,
             "status": asset.status
         })
+    
+
+
 # -------------------- Signup API --------------------
 class SignupAPIViewSet(viewsets.ModelViewSet):
-    queryset = SignupUser.objects.all()
+    queryset = SignupUser.objects.order_by('pk')
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
+    
+    pagination_class = PageNumberPagination         # Set pagination class
+    pagination_class.page_size = 2                  # Set default page size
+    pagination_class.page_query_param = 'pagenum'      # Set page query parameter name 
+    pagination_class.page_size_query_param = 'page_size'   # Allow clients to set page size via query parameter
+    max_page_size = 3                                     # Set maximum page size to prevent abuse 
+    
+    pagination_class = LimitOffsetPagination         # Set pagination class to LimitOffsetPagination
+    # pagination_class.default_limit = 2                # Set default limit for LimitOffsetPagination
+    # pagination_class.limit_query_param = 'limit'     # Set limit query parameter name
+    # pagination_class.offset_query_param = 'offset'   # Set offset query parameter name
 
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]                                         # Enable filtering
+    filterset_fields = {
+        'username': ['exact', 'contains', 'startswith'],
+        'email': ['exact', 'contains'],
+        'first_name': ['exact', 'contains']
+    }
+    
+    # For SearchFilter (text search across fields)
+    search_fields = ['username', 'email', 'first_name']
+    
+    # For OrderingFilter
+    ordering_fields = ['username', 'email', 'first_name', 'id']
+    ordering = ['id']  # Default ordering  
+
+
+    @method_decorator(cache_page(60*15, key_prefix="signup_list"))  # Cache the signup list view for 1 hour 
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)        
+    
+    def get_queryset(self):
+        import time
+        time.sleep(2)                  # Simulate a delay to demonstrate caching
+        return super().get_queryset()
+    
 
 
 # class SignupAPIViewSet(viewsets.ModelViewSet):

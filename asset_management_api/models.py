@@ -1,82 +1,6 @@
 
-
-# from django.db import models
-# from django.contrib.auth.models import AbstractUser
-# from django.utils import timezone
-
-
-# class SignupUser(AbstractUser):
-#     created_by = models.CharField(max_length=100, blank=True, null=True)
-#     created_date = models.DateTimeField(default=timezone.now)
-    
-#     class Meta:
-#         verbose_name = 'User'
-#         verbose_name_plural = 'Users'
-
-
-# class Client(models.Model):
-#     name = models.CharField(max_length=255)
-#     address = models.TextField()
-#     gst_no = models.CharField(max_length=50)
-#     mobile_no = models.CharField(max_length=15)
-#     contact_person = models.CharField(max_length=255)
-#     created_by = models.CharField(max_length=100)
-#     created_date = models.DateTimeField(default=timezone.now)
-    
-#     def __str__(self):
-#         return self.name
-
-
-# class Process(models.Model):
-#     process_name = models.CharField(max_length=255)
-#     created_by = models.CharField(max_length=100)
-#     created_date = models.DateTimeField(default=timezone.now)
-    
-#     def __str__(self):
-#         return self.process_name
-
-
-# class Asset(models.Model):
-#     output_unit_choices = [
-#         ('kg', 'Kilograms'),
-#         ('units', 'Units'),
-#         ('liters', 'Liters'),
-#         ('meters', 'Meters'),
-#     ]
-
-#     raw_material_unit_choices = [
-#         ('kg', 'Kilograms'),
-#         ('tons', 'Tons'),
-#         ('liters', 'Liters'),
-#         ('pieces', 'Pieces'),
-#     ]  
-#     name = models.CharField(max_length=255)
-#     production_capacity = models.DecimalField(max_digits=10, decimal_places=2)
-#     iot_device_id = models.CharField(max_length=100)
-#     plc_device_id = models.CharField(max_length=100)
-#     output_unit = models.CharField(max_length=50)
-#     installation_date = models.DateField()
-#     processed_id = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='assets')
-#     x_example_id = models.CharField(max_length=100, verbose_name="Example ID")  # x:example ID from image
-#     created_by = models.CharField(max_length=100)
-#     created_date = models.DateTimeField(default=timezone.now)
-    
-#     def __str__(self):
-#         return self.name
-
-
-# class ProductionLine(models.Model):
-#     name = models.CharField(max_length=255)
-#     asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name='production_lines')
-#     process = models.ForeignKey(Process, on_delete=models.SET_NULL, null=True, blank=True, related_name='production_lines')
-#     created_by = models.CharField(max_length=100)
-#     created_date = models.DateTimeField(default=timezone.now)
-    
-#     def __str__(self):
-#         return f"{self.name} - {self.asset.name}"
-
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User
 from django.core.validators import RegexValidator
 
 
@@ -133,6 +57,22 @@ mobile_validator = RegexValidator(
     regex=r'^[6-9]\d{9}$',
     message="Enter a valid 10-digit mobile number"
 )
+
+
+# class Profile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     bio = models.TextField()
+# class Asset(models.Model):
+#     name = models.CharField(max_length=100)
+#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+# class AssetHistory(models.Model):
+#     asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+#     action = models.CharField(max_length=50)
+#     performed_by = models.ForeignKey(User, on_delete=models.CASCADE)
+#     timestamp = models.DateTimeField(auto_now_add=True)
+
 
 #  Custom User Model
 

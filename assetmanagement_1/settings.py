@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'asset_management_api',
     'drf_spectacular',
+    'django_filters',
     # 'rest_framework_simplejwt.token_blacklist',
 ]
 
@@ -129,26 +130,21 @@ STATIC_URL = 'static/'
 
 
 REST_FRAMEWORK = {
+'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 5,
 'DEFAULT_PERMISSION_CLASSES': [
     'rest_framework.permissions.IsAuthenticated',
 ],
 'DEFAULT_AUTHENTICATION_CLASSES': [
-    # 'rest_framework.authentication.JWTAuthentication',
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
     'rest_framework.authentication.BasicAuthentication',
-    'rest_framework.authentication.SessionAuthentication',
-    
+    'rest_framework.authentication.SessionAuthentication',    
 ],
 
+'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    
 
-'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
-
-
-}
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
 }
 
 
@@ -234,6 +230,16 @@ SWAGGER_SETTINGS = {
 CSRF_TRUSTED_ORIGINS = [
     "https://asset-management-project-1lzy.onrender.com",
 ]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
 
 
 

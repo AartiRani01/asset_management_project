@@ -83,10 +83,11 @@ router.register(r'profile', UserProfileViewSet, basename='profile')
 router.register(r'assets', AssetViewSet, basename='asset')
 # router.register(r'albums', AlbumViewSet, basename='album')
 
+
 urlpatterns = [
     path('login/', LoginAPIView.as_view(), name='login'),
     path('logout/', LogoutAPIView.as_view(), name='logout'),
     path('', include(router.urls)),
     path('token/refresh/', TokenRefreshAPIView.as_view(), name='token_refresh'),
-
+    # path("test-digifact/", TestDigifactAPI.as_view(), name='test-digifact'),
 ]
