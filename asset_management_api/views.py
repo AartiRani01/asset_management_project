@@ -67,6 +67,8 @@ class AssetViewSet(viewsets.ModelViewSet):
 
         ip = get_ip(request)
         location_data = get_location_from_ip(ip) or {}
+        print("location data ", location_data)  
+        print("ip is ", ip)
 
         asset = serializer.save(
             ip_address=location_data.get("ip", ip),
