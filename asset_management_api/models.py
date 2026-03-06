@@ -133,7 +133,7 @@ class Client(models.Model):
     mobile_no = models.CharField(max_length=15)
     contact_person = models.CharField(max_length=255)
     location = models.CharField(max_length=100, blank=True, null=True)
-    ip_address = models.GenericIPAddressField(protocol='both',unpack_ipv4=False,null=True)
+    ip_address = models.CharField(max_length=39, null=True, blank=True)  # IPv4 or IPv6
     geo_location = models.JSONField(null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     region = models.CharField(max_length=100, null=True, blank=True)
@@ -181,8 +181,8 @@ class Asset(models.Model):
     iot_device_id = models.CharField(max_length=100, null = True)
     plc_device_id = models.CharField(max_length=100, null = True)
     energy_meter_id = models.CharField(max_length=100, blank=True, null=True)
-    ip_address = models.GenericIPAddressField(protocol='both',unpack_ipv4=False,null=True)
-    #geo_location = models.JSONField(null=True, blank=True)
+    ip_address = models.CharField(max_length=39, null=True, blank=True)  # IPv4 or IPv6
+    geo_location = models.JSONField(null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     region = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(max_length=100, null=True, blank=True)
