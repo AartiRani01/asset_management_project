@@ -10,6 +10,10 @@ def get_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
 
+    # remove port if present
+    if ip and ":" in ip:
+        ip = ip.split(":")[0]
+
     return ip
 
 
